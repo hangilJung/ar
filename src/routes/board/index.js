@@ -45,6 +45,7 @@ router.post("/record/create", async (req, res) => {
     "insert into disaster_record (title,content, manager_id) values(?,?,?)",
     [title, content, manager_id]
   );
+  console.log(result);
   if (result[0].affectedRows > 0) {
     res.json({ msg: "record 글쓰기 성공" });
   }
@@ -63,7 +64,7 @@ router.post("/safety/create", async (req, res) => {
 
 router.post("/record/update", async (req, res) => {
   const { title, content, id } = req.body;
-  let errorMsg = {};
+  let msg = {};
 
   if (
     typeof title === "string" &&
@@ -82,15 +83,15 @@ router.post("/record/update", async (req, res) => {
     }
   } else {
     if (typeof title !== "string") {
-      errorMsg["titleError"] = "title이 문자열이 아닙니다.";
+      msg["titleTypeError"] = "title이 문자열이 아닙니다.";
     }
     if (typeof content !== "string") {
-      errorMsg["contentError"] = "content이 문자열이 아닙니다.";
+      msg["contentTypeError"] = "content이 문자열이 아닙니다.";
     }
     if (typeof id !== "number") {
-      errorMsg["idError"] = "id가 숫자가 아닙니다.";
+      msg["idTypeError"] = "id가 숫자가 아닙니다.";
     }
-    res.json(errorMsg);
+    res.json(msg);
   }
 });
 

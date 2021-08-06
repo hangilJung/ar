@@ -99,6 +99,7 @@ router.post("/desc", async (req, res) => {
   }
 
   const result = await pool.query(sql, condition);
+  console.log(result);
   res.json(result[0]);
 });
 
