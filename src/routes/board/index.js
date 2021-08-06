@@ -2,7 +2,28 @@ const express = require("express");
 const router = express.Router();
 const pool = require("../../config/config");
 
-router.get("/record", async (req, res) => {
+router.post("/record/read", async (req, res) => {
+  try {
+    const { start_date, end_date } = req.body;
+
+    let sql = "select * from disaster_record where 1 = 1 ";
+    let condition = [];
+
+    if (start_date && end_date) {
+      sql += "and created_at >= ? and created_at <= ?";
+      condition.push(start_date);
+      condition.push(end_date);
+    }
+
+    const result = await pool.query(sql, condition);
+    res.json(result[0]);
+  } catch (error) {
+    console.log(error);
+    res.json("record 조회 할 수 없습니다.");
+  }
+});
+
+router.post("/safety/read", async (req, res) => {
   const { start_date, end_date } = req.body;
 
   let sql = "select * from disaster_record where 1 = 1 ";
@@ -18,23 +39,7 @@ router.get("/record", async (req, res) => {
   res.json(result[0]);
 });
 
-router.get("/safety", async (req, res) => {
-  const { start_date, end_date } = req.body;
-
-  let sql = "select * from disaster_record where 1 = 1 ";
-  let condition = [];
-
-  if (start_date && end_date) {
-    sql += "and created_at >= ? and created_at <= ?";
-    condition.push(start_date);
-    condition.push(end_date);
-  }
-
-  const result = await pool.query(sql, condition);
-  res.json(result[0]);
-});
-
-router.post("/record", async (req, res) => {
+router.post("/record/create", async (req, res) => {
   const { title, content, manager_id } = req.body;
   const result = await pool.query(
     "insert into disaster_record (title,content, manager_id) values(?,?,?)",
@@ -45,7 +50,7 @@ router.post("/record", async (req, res) => {
   }
 });
 
-router.post("/safety", async (req, res) => {
+router.post("/safety/create", async (req, res) => {
   const { title, content, manager_id } = req.body;
   const result = await pool.query(
     "insert into disaster_safety (title,content, manager_id) values(?,?,?)",
@@ -56,19 +61,40 @@ router.post("/safety", async (req, res) => {
   }
 });
 
-router.put("/record", async (req, res) => {
+router.post("/record/update", async (req, res) => {
   const { title, content, id } = req.body;
+  let errorMsg = {};
 
-  const result = await pool.query(
-    "update disaster_record set title = ?, content = ?, updated_at = now() where id = ? ",
-    [title, content, id]
-  );
-  if (result[0].affectedRows > 0) {
-    res.json({ msg: "record 글 수정하기 성공" });
+  if (
+    typeof title === "string" &&
+    typeof content === "string" &&
+    typeof id === "number"
+  ) {
+    const result = await pool.query(
+      "update disaster_record set title = ?, content = ?, updated_at = now() where id = ? ",
+      [title, content, id]
+    );
+    console.log(result);
+    if (result[0].affectedRows > 0) {
+      res.json({ msg: "record 글 수정하기 성공" });
+    } else {
+      res.json({ msg: "해당하는 id가 없습니다." });
+    }
+  } else {
+    if (typeof title !== "string") {
+      errorMsg["titleError"] = "title이 문자열이 아닙니다.";
+    }
+    if (typeof content !== "string") {
+      errorMsg["contentError"] = "content이 문자열이 아닙니다.";
+    }
+    if (typeof id !== "number") {
+      errorMsg["idError"] = "id가 숫자가 아닙니다.";
+    }
+    res.json(errorMsg);
   }
 });
 
-router.put("/safety", async (req, res) => {
+router.post("/safety/update", async (req, res) => {
   const { title, content, id } = req.body;
 
   const result = await pool.query(
@@ -80,7 +106,7 @@ router.put("/safety", async (req, res) => {
   }
 });
 
-router.delete("/record", async (req, res) => {
+router.post("/record/delete", async (req, res) => {
   const { id } = req.body;
   const result = await pool.query("delete from disaster_record where id = ?", [
     id,
@@ -90,7 +116,7 @@ router.delete("/record", async (req, res) => {
   }
 });
 
-router.delete("/safety", async (req, res) => {
+router.post("/safety/delete", async (req, res) => {
   const { id } = req.body;
   const result = await pool.query("delete from disaster_safety where id = ?", [
     id,
