@@ -1,0 +1,38 @@
+{
+  "config": {
+    "target": "http://localhost:3200",
+    "phases": [
+      {
+        "duration": 60,
+        "arrivalRate": 100
+      }
+    ]
+  },
+
+  "scenarios": [
+    {
+      "flow": [
+        {
+          "post": {
+            "url": "/sensor/hour",
+            "json": {
+              "place_id": 1,
+              "start_date": "2020-01-01",
+              "end_date": "2020-01-01"
+            }
+          }
+        },
+        {
+          "post": {
+            "url": "/sensor/month",
+            "json": {
+              "place_id": 1,
+              "start_date": "2020-01-01",
+              "end_date": "2020-12-31"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

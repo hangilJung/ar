@@ -1,4 +1,3 @@
-require("dotenv").config();
 const mysql = require("mysql2/promise");
 
 const pool = mysql.createPool({
@@ -11,10 +10,5 @@ const pool = mysql.createPool({
   queueLimit: 0,
   dateStrings: "date",
 });
-
-// db.connect((err) => {
-//   if (err) throw err;
-//   console.log("DataBase 연결 성공");
-// });
 
 module.exports = pool;
