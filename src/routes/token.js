@@ -19,12 +19,10 @@ router.post("/v1", async (req, res) => {
       "select * from domain where client_secret = ?",
       [client_secret]
     );
-    console.log(result[0]);
-
     if (result[0].length > 0) {
       const accessToken = jwt.sign(
         {
-          expires_at: moment().add(1, "h").format("YYYY-MM-DD HH:mm:ss"),
+          expires_at: moment().add(2, "h").format("YYYY-MM-DD HH:mm:ss"),
           issued_at: moment().format("YYYY-MM-DD HH:mm:ss"),
         },
         process.env.JWT_SECRET,
@@ -40,14 +38,13 @@ router.post("/v1", async (req, res) => {
       };
       response.body = {
         accessToken,
-        expires_at: "1m",
-        // moment().add(1, "h").format("YYYY-MM-DD HH:mm:ss"),
+        expires_at: moment().add(2, "h").format("YYYY-MM-DD HH:mm:ss"),
         issued_at: moment().format("YYYY-MM-DD HH:mm:ss"),
       };
       res.json(response);
     } else {
-      logger.error("/token/v1 error message: NOT_ALLOW_DOMAIN");
-      response.header = { resultCode: "31", resultMsg: "NOT_ALLOW_DOMAIN" };
+      logger.error("/token/v1 error message: NOT_ALLOW_KEY");
+      response.header = { resultCode: "31", resultMsg: "NOT_ALLOW_KEY" };
       res.status(400).json(response);
     }
   } catch (error) {

@@ -26,28 +26,28 @@ router.post("/", async (req, res) => {
     address3,
     cast(latitude as char) as latitude,
     cast(longitude as char) as longitude,
-    if( sky.pty = 0, 
+    if( short_term_forecast.pty = 0, 
     case
-		when sky.sky = 1 then
+		when short_term_forecast.sky = 1 then
 			'맑음'
-		when sky.sky = 3 then
+		when short_term_forecast.sky = 3 then
 			'구름많음'
-		when sky.sky = 4 then
+		when short_term_forecast.sky = 4 then
 			'흐림'
     end    
     , 
     CASE
-		WHEN sky.pty = 1 THEN
+		WHEN short_term_forecast.pty = 1 THEN
 			'비'
-		WHEN sky.pty = 2 THEN
+		WHEN short_term_forecast.pty = 2 THEN
 			'비/눈'
-		WHEN sky.pty = 3 THEN
+		WHEN short_term_forecast.pty = 3 THEN
 			'눈'
-		WHEN sky.pty = 5 THEN
+		WHEN short_term_forecast.pty = 5 THEN
 			'빗방울'
-		WHEN sky.pty = 6 THEN
+		WHEN short_term_forecast.pty = 6 THEN
 			'빗방울눈날림'
-		WHEN sky.pty = 7 THEN
+		WHEN short_term_forecast.pty = 7 THEN
 			'눈날림'
 	END  		
 	) as weatherName,    		
@@ -73,8 +73,7 @@ router.post("/", async (req, res) => {
                               AND SENSOR.ID = X.ID) S
       ON S.PLACE_ID = P.SENSOR_ID LEFT OUTER JOIN RISK_DETECTION R 
       ON P.sensor_id = R.ID, 
-      (select * from sky where created_at = (select max(created_at) from sky)) as sky
-      
+      (select * from short_term_forecast where created_at = (select max(created_at) from short_term_forecast)) as short_term_forecast    
       `
     );
 
@@ -94,5 +93,7 @@ router.post("/", async (req, res) => {
     };
   }
 });
+
+router.post("/test", async (req, res) => {});
 
 module.exports = router;

@@ -1,7 +1,7 @@
 const app = require("../app");
-const PORT = process.env.PORT || 3200;
 const logger = require("../src/config/logger");
+const PORT = process.env.PORT || 3200;
 
 app.listen(PORT, "0.0.0.0", () => {
-  logger.info(`WEB서버 가동 ${PORT}`);
+  logger.info(`DATA BASE 서버 가동 ${PORT}`);
 });

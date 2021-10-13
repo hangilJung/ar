@@ -16,7 +16,7 @@ router.post("/", async (req, res) => {
   let response = {
     header: {},
   };
-  //날짜 검사 윤달, 30,31, 시작날짜가 끝날짜보다 더 뒷 날일때
+
   if (
     moment(start_date).format("YYYYMMDD") === "Invalid date" ||
     moment(end_date).format("YYYYMMDD") === "Invalid date" ||
@@ -143,7 +143,7 @@ router.post("/year", async (req, res) => {
   let { end_date } = req.body;
   end_date = moment(end_date).add(1, "days").format("YYYY-MM-DD");
 
-  let sql = `select cast(sum(precipitation) as signed integer) as precipitation, 
+  let sql = `select cast(avg(precipitation) as signed integer) as precipitation, 
   cast(avg(water_level) as signed integer) as water_level, 
   cast(avg(temperature) as signed integer) as temperature, 
   cast(avg(humidity) as signed integer) as humidity, date_format(created_at, '%Y-%m-%d %T') as created_at 
@@ -209,7 +209,7 @@ router.post("/month", async (req, res) => {
 
   let sql = `select 
   concat(month(s.created_at), '월') as month,
-  cast(sum(precipitation) as signed integer) as precipitation, 
+  cast(avg(precipitation) as signed integer) as precipitation, 
   cast(avg(water_level) as signed integer) as water_level, 
   cast(avg(temperature) as signed integer) as temperature, 
   cast(avg(humidity) as signed integer) as humidity, 
@@ -276,8 +276,9 @@ router.post("/hour", async (req, res) => {
 
   let { end_date } = req.body;
   end_date = moment(end_date).add(1, "days").format("YYYY-MM-DD");
-  let sql = `select 
-  cast(sum(precipitation) as signed integer) as precipitation, 
+  let sql = `
+  select 
+  cast(avg(precipitation) as signed integer) as precipitation, 
   cast(avg(water_level) as signed integer) as water_level, 
   cast(avg(temperature) as signed integer) as temperature, 
   cast(avg(humidity) as signed integer) as humidity, 
@@ -434,6 +435,13 @@ router.post("/readrisk", async (req, res) => {
     };
     res.status(400).json(response);
   }
+});
+
+router.post("/test", async (req, res) => {
+  try {
+    const result = await pool.query("select * from sensor");
+    res.json(result[0]);
+  } catch (error) {}
 });
 
 module.exports = router;

@@ -8,9 +8,9 @@ const manager = require("./manager.js");
 const weather = require("./weather.js");
 const orb = require("./orb.js");
 
-router.use("/sensor", verifyToken, sensor);
+router.use("/sensor", sensor);
 router.use("/token", token);
-router.use("/manager", verifyToken, manager);
+router.use("/manager", manager);
 router.use("/weather", weather);
 router.use("/orb", orb);
 
