@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "test": "jest",
-    "start": "nodemon bin/www"
+    "start": "pm2 start bin/www.js --name=api",
+    "dev": "nodemon bin/www"
   },
   "author": "sooin",
   "license": "ISC",
@@ -22,6 +23,7 @@
     "moment": "^2.29.1",
     "morgan": "^1.10.0",
     "mysql2": "^2.2.5",
+    "pm2": "^5.1.2",
     "winston": "^3.3.3",
     "winston-daily-rotate-file": "^4.5.5"
   },
